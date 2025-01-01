@@ -1,21 +1,38 @@
-import http from "node:http";
-
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
-import * as mongoose from "mongoose";
-
+import session from "express-session";
+import http from "http";
+import mongoose from "mongoose";
+import passport from "passport";
 import { Server } from "socket.io";
+
 import { configs } from "./config/config";
 import { ApiError } from "./errors/api-error";
 import { authRouter } from "./router/auth.router";
-import { chartRouter } from "./router/chart.router";
+import { chatRouter } from "./router/chat.router";
 import { messageRouter } from "./router/message.router";
-import { socketRouter } from "./router/socket.router";
+import { socketService } from "./service/socket.service";
 
 const app = express();
 const server = http.createServer(app);
-//
-const io = new Server();
+
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
+socketService.initialize(io);
+
+app.use(
+  session({
+    secret: configs.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+  }),
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(
   cors({
@@ -40,10 +57,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-app.use("/chart", chartRouter);
 app.use("/auth", authRouter);
+app.use("/chart", chatRouter);
 app.use("/message", messageRouter);
-app.use("/socket", socketRouter);
 
 app.use(
   "*",
@@ -58,8 +74,12 @@ process.on("uncaughtException", (error) => {
 });
 
 server.listen(configs.APP_PORT, async () => {
-  await mongoose.connect(configs.APP_MONGO_URL);
-  console.log(
-    `Server is running on http://${configs.APP_HOST}:${configs.APP_PORT}`,
-  );
+  try {
+    await mongoose.connect(configs.APP_MONGO_URL);
+    console.log(
+      `Server is running on http://${configs.APP_HOST}:${configs.APP_PORT}`,
+    );
+  } catch (error) {
+    console.error("Database connection error:", error.message);
+  }
 });

@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 
-import { IMessage } from "../interfaces/user.interface";
+import { IMessage } from "../interfaces/message.interface";
 
 const messageSchema = new Schema(
   {
@@ -27,5 +27,4 @@ const messageSchema = new Schema(
   },
 );
 
-// Создание модели
 export const Message = model<IMessage>("Message", messageSchema);

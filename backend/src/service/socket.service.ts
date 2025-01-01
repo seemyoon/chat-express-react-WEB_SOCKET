@@ -1,4 +1,3 @@
-import { NextFunction, Request, Response } from "express";
 import { Server, Socket } from "socket.io";
 
 import { messageService } from "./message.service";
@@ -6,25 +5,22 @@ import { messageService } from "./message.service";
 class SocketService {
   private io: Server;
 
-  initialize(httpServer: any) {
-    this.io = new Server(httpServer, {
-      cors: {
-        origin: "*",
-        methods: ["GET", "POST"],
-      },
-    });
+  public initialize(io: Server) {
+    this.io = io;
 
-    this.io.on("connection", (socket: Socket) => {
+    io.on("connection", (socket: Socket) => {
       console.log("a user connected");
 
       socket.on("sendMessage", async (data) => {
         const { chatId, text, sender } = data;
-        const message = await messageService.createMessage(
-          chatId,
-          text,
-          sender,
-        );
+        const message = await messageService.sendMessage(chatId, text, sender);
         this.io.emit("receiveMessage", message);
+      });
+
+      socket.on("startAutoSend", (data) => {
+        const { randomMessage, chatId, interval } = data;
+        messageService.startAutoSend(randomMessage, chatId, interval);
+        socket.emit("autoSendStarted", "auto send is turn on");
       });
 
       socket.on("disconnect", () => {
@@ -33,27 +29,8 @@ class SocketService {
     });
   }
 
-  // Геттер для io
-  public getIo() {
-    return this.io;
-  }
-
-  public async handleAutoSend(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { chatId, message } = req.body;
-      this.getIo().emit("receiveMessage", { chatId, message });
-      res.status(200).json({ success: true });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  public sendMessageToRandomChat(message: string) {
-    const clients = Array.from(this.getIo().sockets.sockets.values());
-    if (clients.length > 0) {
-      const randomClient = clients[Math.floor(Math.random() * clients.length)];
-      randomClient.emit("receiveMessage", message);
-    }
+  public emit(event: string, data: any) {
+    this.io.emit(event, data);
   }
 }
 

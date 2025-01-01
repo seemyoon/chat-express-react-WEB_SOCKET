@@ -1,11 +1,19 @@
 import { NextFunction, Request, Response } from "express";
 
+import { authService } from "../service/auth.service";
+
 class AuthController {
-  public async googleLogin(req: Request, res: Response, next: NextFunction) {}
+  public googleLogin(req: Request, res: Response, next: NextFunction) {
+    authService.googleLogin(req, res, next);
+  }
 
-  public async facebookLogin(req: Request, res: Response, next: NextFunction) {}
+  public googleCallback(req: Request, res: Response, next: NextFunction) {
+    authService.googleCallback(req, res, next);
+  }
 
-  public async logout(req: Request, res: Response, next: NextFunction) {}
+  public logout(req: Request, res: Response) {
+    authService.logout(req, res);
+  }
 }
 
 export const authController = new AuthController();
