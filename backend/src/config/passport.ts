@@ -15,7 +15,7 @@ passport.use(
     {
       clientID: configs.GOOGLE_CLIENT_ID,
       clientSecret: configs.GOOGLE_CLIENT_SECRET,
-      callbackURL: configs.CALLBACK_URL,
+      callbackURL: configs.CALLBACK_URL_TEST,
     },
     function (request, accessToken, refreshToken, profile, done) {
       return done(null, profile);

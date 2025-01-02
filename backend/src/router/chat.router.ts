@@ -1,33 +1,32 @@
 import { Router } from "express";
 
 import { chatController } from "../controllers/chat.controller";
-import { authMiddleware } from "../middleware/isAuthenticated.middleware";
 
 const router = Router();
 
 router.post(
   "/createChat",
-  authMiddleware.isAuthenticated,
+  // authMiddleware.isAuthenticated,
   chatController.createChat,
 );
 router.put(
   "/updateChat",
-  authMiddleware.isAuthenticated,
+  // authMiddleware.isAuthenticated,
   chatController.updateChat,
 );
 router.get(
   "/getChats",
-  authMiddleware.isAuthenticated,
+  // authMiddleware.isAuthenticated,
   chatController.getChats,
 );
-router.post(
+router.get(
   "/searchChats",
-  authMiddleware.isAuthenticated,
+  // authMiddleware.isAuthenticated,
   chatController.searchChats,
 );
 router.post(
   "/removeChat",
-  authMiddleware.isAuthenticated,
+  // authMiddleware.isAuthenticated,
   chatController.removeChat,
 );
 

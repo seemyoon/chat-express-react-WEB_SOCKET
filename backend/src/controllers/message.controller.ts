@@ -17,11 +17,19 @@ class MessageController {
     res.status(200).json(messages);
   }
 
-  public async handleAutoSend(req: Request, res: Response, next: NextFunction) {
+  public startAutoSend(req: Request, res: Response, next: NextFunction) {
     try {
-      const { chatId, message } = req.body;
-      await messageService.handleAutoSend(message, chatId);
-      res.status(200).json({ success: true });
+      messageService.startAutoSend();
+      res.status(200).json({ message: "Auto send started" });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public stopAutoSend(req: Request, res: Response, next: NextFunction) {
+    try {
+      messageService.stopAutoSend();
+      res.status(200).json({ message: "Auto send stopped" });
     } catch (error) {
       next(error);
     }

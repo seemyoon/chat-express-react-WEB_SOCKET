@@ -22,7 +22,12 @@ class ChatRepository {
   }
 
   public async searchChats(query: string) {
-    return await Chat.find({ firstName: { $regex: query, $options: "i" } });
+    return await Chat.find({
+      $or: [
+        { firstName: { $regex: query, $options: "i" } },
+        { lastName: { $regex: query, $options: "i" } },
+      ],
+    });
   }
 }
 

@@ -4,7 +4,6 @@ import { socketService } from "./socket.service";
 class ChatService {
   public async createChat(firstName: string, lastName: string) {
     const chat = await chatRepository.createChat({ firstName, lastName });
-    console.log("asdas");
     socketService.emit("newChat", chat);
     return chat;
   }
@@ -30,17 +29,6 @@ class ChatService {
 
   public async searchChats(query: string) {
     return await chatRepository.searchChats(query);
-  }
-
-  public async sendAutoResponse(chatId: string, message: string) {
-    setTimeout(async () => {
-      const autoResponseMessage = {
-        text: `Auto Response: ${message}`,
-        sender: "AutoResponder",
-        chatId,
-      };
-      socketService.emit("receiveMessage", autoResponseMessage);
-    }, 3000);
   }
 }
 
