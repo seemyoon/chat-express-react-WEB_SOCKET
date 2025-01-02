@@ -4,6 +4,7 @@ import { socketService } from "./socket.service";
 class ChatService {
   public async createChat(firstName: string, lastName: string) {
     const chat = await chatRepository.createChat({ firstName, lastName });
+    console.log("asdas");
     socketService.emit("newChat", chat);
     return chat;
   }

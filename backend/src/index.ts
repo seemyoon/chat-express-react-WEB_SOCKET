@@ -1,12 +1,13 @@
+import * as http from "node:http";
+
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import session from "express-session";
-import http from "http";
 import mongoose from "mongoose";
-import passport from "passport";
 import { Server } from "socket.io";
 
 import { configs } from "./config/config";
+import passport from "./config/passport";
 import { ApiError } from "./errors/api-error";
 import { authRouter } from "./router/auth.router";
 import { chatRouter } from "./router/chat.router";
@@ -21,18 +22,11 @@ const io = new Server(server, {
     origin: "*",
   },
 });
+
 socketService.initialize(io);
 
-app.use(
-  session({
-    secret: configs.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-  }),
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
@@ -49,16 +43,28 @@ app.use(
   }),
 );
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(
+  session({
+    secret: configs.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+  }),
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   console.log(`${req.method} ${req.path}`);
   next();
 });
 
+app.get("/", (req, res) => {
+  res.send("<button><a href='/auth/google'>Login With Google</a></button>");
+});
+
 app.use("/auth", authRouter);
-app.use("/chart", chatRouter);
+app.use("/chat", chatRouter);
 app.use("/message", messageRouter);
 
 app.use(
@@ -77,7 +83,7 @@ server.listen(configs.APP_PORT, async () => {
   try {
     await mongoose.connect(configs.APP_MONGO_URL);
     console.log(
-      `Server is running on http://${configs.APP_HOST}:${configs.APP_PORT}`,
+      ` Server is running on http://${configs.APP_HOST}:${configs.APP_PORT}`,
     );
   } catch (error) {
     console.error("Database connection error:", error.message);

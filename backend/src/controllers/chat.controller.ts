@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { chatService } from "../service/chart.service";
+import { chatService } from "../service/chat.service";
 
 class ChatController {
   public async createChat(req: Request, res: Response, next: NextFunction) {

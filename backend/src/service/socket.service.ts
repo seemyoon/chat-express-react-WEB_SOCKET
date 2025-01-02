@@ -1,7 +1,5 @@
 import { Server, Socket } from "socket.io";
 
-import { messageService } from "./message.service";
-
 class SocketService {
   private io: Server;
 
@@ -9,22 +7,15 @@ class SocketService {
     this.io = io;
 
     io.on("connection", (socket: Socket) => {
-      console.log("a user connected");
+      console.log("A user connected");
 
-      socket.on("sendMessage", async (data) => {
-        const { chatId, text, sender } = data;
-        const message = await messageService.sendMessage(chatId, text, sender);
-        this.io.emit("receiveMessage", message);
-      });
-
-      socket.on("startAutoSend", (data) => {
-        const { randomMessage, chatId, interval } = data;
-        messageService.startAutoSend(randomMessage, chatId, interval);
-        socket.emit("autoSendStarted", "auto send is turn on");
+      socket.on("sendMessage", (data) => {
+        console.log("Message received:", data);
+        this.io.emit("receiveMessage", data);
       });
 
       socket.on("disconnect", () => {
-        console.log("user disconnected");
+        console.log("User disconnected");
       });
     });
   }
