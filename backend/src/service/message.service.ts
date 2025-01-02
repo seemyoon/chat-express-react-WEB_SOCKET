@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+import axios from "axios";
 import { setInterval } from "timers";
 
 import { IQuoteResponse } from "../interfaces/quote-response";
@@ -9,6 +9,7 @@ import { socketService } from "./socket.service";
 
 class MessageService {
   private autoSendInterval: NodeJS.Timeout | null = null;
+
   public async sendMessage(chatId: string, text: string, sender: string) {
     return await messageRepository.sendMessage(chatId, text, sender);
   }
@@ -24,9 +25,8 @@ class MessageService {
 
     this.autoSendInterval = setInterval(async () => {
       try {
-        const data = await fetch("https://dummyjson.com/quotes/random").then(
-          (res) => res.json(),
-        );
+        const response = await axios.get("https://dummyjson.com/quotes/random");
+        const data = response.data;
 
         if (this.isQuoteResponse(data)) {
           const randomQuote = data.quote;
@@ -76,4 +76,5 @@ class MessageService {
     }
   }
 }
+
 export const messageService = new MessageService();
