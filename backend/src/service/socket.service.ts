@@ -1,5 +1,7 @@
 import { Server, Socket } from "socket.io";
 
+import { IChat } from "../interfaces/chat.interface";
+
 class SocketService {
   private io: Server;
 
@@ -7,7 +9,17 @@ class SocketService {
     this.io = io;
 
     io.on("connection", (socket: Socket) => {
-      console.log("A user connected");
+      console.log("A user connected", socket.id);
+
+      socket.on("chatCreated", (newChat: IChat) => {
+        console.log("New chat created:", newChat);
+        this.io.emit("chatCreated", newChat);
+      });
+
+      socket.on("chatDeleted", (chatId: string) => {
+        console.log("Chat deleted:", chatId);
+        this.io.emit("chatDeleted", chatId);
+      });
 
       socket.on("sendMessage", (data) => {
         console.log("Message received:", data);
@@ -15,7 +27,7 @@ class SocketService {
       });
 
       socket.on("disconnect", () => {
-        console.log("User disconnected");
+        console.log("User disconnected", socket.id);
       });
     });
   }

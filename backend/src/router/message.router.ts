@@ -4,27 +4,20 @@ import { messageController } from "../controllers/message.controller";
 
 const router = Router();
 
-router.get(
-  "/getMessages",
-  // authMiddleware.isAuthenticated,
-  messageController.getMessage,
-);
-router.post(
-  "/sendMessage",
-  // authMiddleware.isAuthenticated,
-  messageController.sendMessage,
-);
+router.post("/message/:chatId", messageController.sendMessage);
 
-router.post(
-  "/startAutoSend",
-  // authMiddleware.isAuthenticated,
-  messageController.startAutoSend,
-);
-
-router.post(
-  "/stopAutoSend",
-  // authMiddleware.isAuthenticated,
-  messageController.stopAutoSend,
-);
+// Получение сообщений для чата (параметр chatId передается в URL)
+router.get("/messages/:chatId", messageController.getMessages);
+// router.post(
+//   "/startAutoSend",
+//   // authMiddleware.isAuthenticated,
+//   messageController.startAutoSend,
+// );
+//
+// router.post(
+//   "/stopAutoSend",
+//   // authMiddleware.isAuthenticated,
+//   messageController.stopAutoSend,
+// );
 
 export const messageRouter = router;

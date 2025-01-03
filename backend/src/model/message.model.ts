@@ -14,11 +14,8 @@ const messageSchema = new Schema(
     },
     sender: {
       type: String,
+      enum: ["User", "AutoResponder"],
       required: true,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
     },
   },
   {

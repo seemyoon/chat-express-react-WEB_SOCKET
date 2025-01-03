@@ -1,8 +1,8 @@
 import { Message } from "../model/message.model";
 
 class MessageRepository {
-  public async sendMessage(chatId: string, text: string, sender: string) {
-    await Message.create({ chatId, text, sender });
+  public async sendMessage(chatId: string, text: string) {
+    await Message.create({ chatId, text});
   }
 
   public async getMessage(chatId: string) {

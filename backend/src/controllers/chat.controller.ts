@@ -31,8 +31,9 @@ class ChatController {
   public async removeChat(req: Request, res: Response, next: NextFunction) {
     const { chatId } = req.params;
     try {
-      const deletedChat = await chatService.removeChat(chatId);
-      res.status(200).json(deletedChat);
+      console.log(chatId);
+      await chatService.removeChat(chatId);
+      res.status(204).json();
     } catch (error) {
       next(error);
     }

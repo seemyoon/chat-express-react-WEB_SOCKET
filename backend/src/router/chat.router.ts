@@ -4,32 +4,13 @@ import { chatController } from "../controllers/chat.controller";
 
 const router = Router();
 
-router.post(
-  "/createChat",
-  // authMiddleware.isAuthenticated,
-  chatController.createChat,
-);
-router.put(
-  "/updateChat",
-  // authMiddleware.isAuthenticated,
-  chatController.updateChat,
-);
-router.get(
-  "/getChats",
-  // authMiddleware.isAuthenticated,
-  chatController.getChats,
-);
-router.get(
-  "/searchChats",
-  // authMiddleware.isAuthenticated,
-  chatController.searchChats,
-);
-router.post(
-  "/removeChat",
-  // authMiddleware.isAuthenticated,
-  chatController.removeChat,
-);
+router.get("/getChats", chatController.getChats);
+router.get("/searchChats", chatController.searchChats);
 
-// router.get("/:chatId", authMiddleware.isAuthenticated, chatController.getChat);
+router.post("/createChat", chatController.createChat);
+
+router.delete("/removeChat/:chatId", chatController.removeChat);
+
+router.put("/updateChat/:chatId", chatController.updateChat);
 
 export const chatRouter = router;
