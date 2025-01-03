@@ -1,97 +1,40 @@
-import React, {useEffect, useState} from "react";
-import {IChat} from "../interfaces/chat.interface";
-import {chatService} from "../services/chat.service";
-import {socket} from "../utils/socket";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { chatService } from "../services/chat.service";
+import { IChat } from "../interfaces/chat.interface";
 
 const ChatPage = () => {
-    const [chats, setChats] = useState<IChat[]>([]);
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-
-
-    const fetchChats = async () => {
-        try {
-            // const chatList = await chatService.getChats();
-            // setChats(chatList);
-        } catch (error) {
-            console.error("Failed to fetch chats:", error);
-        }
-    };
-
-
-    const handleCreateChat = async () => {
-        if (!firstName || !lastName) {
-            alert("Both fields are required");
-            return;
-        }
-        try {
-            const newChat = await chatService.createChat({firstName, lastName});
-            socket.emit("chatCreated", newChat);
-            setFirstName("");
-            setLastName("");
-        } catch (error) {
-            console.error("Failed to create chat:", error);
-        }
-    };
-
-
-    const handleDeleteChat = async (chatId: string) => {
-        if (window.confirm("Are you sure you want to delete this chat?")) {
-            try {
-                await chatService.removeChat(chatId);
-                socket.emit("chatDeleted", chatId);
-            } catch (error) {
-                console.error("Failed to delete chat:", error);
-            }
-        }
-    };
-
+    const { chatId } = useParams<{ chatId: string }>();
+    const [chat, setChat] = useState<IChat | null>(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        fetchChats();
+        if (!chatId) return;
 
-        socket.on("chatCreated", (newChat: IChat) => {
-            setChats((prevChats) => [...prevChats, newChat]);
-        });
-
-        socket.on("chatDeleted", (deletedChatId: string) => {
-            setChats((prevChats) =>
-                prevChats.filter((chat) => chat._id !== deletedChatId)
-            );
-        });
-
-        return () => {
-            socket.off("chatCreated");
-            socket.off("chatDeleted");
+        const fetchChat = async () => {
+            try {
+                setLoading(true);
+                const fetchedChat = await chatService.getChatById(chatId);
+                setChat(fetchedChat);
+            } catch (error) {
+                console.error("Error fetching chat:", error);
+            } finally {
+                setLoading(false);
+            }
         };
-    }, []);
+        fetchChat();
+    }, [chatId]);
 
     return (
         <div>
-            <h2>Chat List</h2>
-            <ul>
-                {chats.map((chat) => (
-                    <li key={chat._id}>
-                        {chat.firstName} {chat.lastName}
-                        <button onClick={() => handleDeleteChat(chat._id)}>Delete</button>
-                    </li>
-                ))}
-            </ul>
-sda
-            <h3>Create New Chat</h3>
-            <input
-                type="text"
-                placeholder="First Name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-            />
-            <input
-                type="text"
-                placeholder="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-            />
-            <button onClick={handleCreateChat}>Create</button>
+            <h3>Chat with {chat?.firstName} {chat?.lastName}</h3>
+            {loading ? (
+                <p>Loading chat...</p>
+            ) : (
+                <div>
+                    <p>Messages go here...</p>
+                </div>
+            )}
         </div>
     );
 };

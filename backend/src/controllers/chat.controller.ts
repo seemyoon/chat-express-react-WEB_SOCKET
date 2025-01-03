@@ -31,7 +31,6 @@ class ChatController {
   public async removeChat(req: Request, res: Response, next: NextFunction) {
     const { chatId } = req.params;
     try {
-      console.log(chatId);
       await chatService.removeChat(chatId);
       res.status(204).json();
     } catch (error) {
@@ -42,6 +41,15 @@ class ChatController {
   public async getChats(req: Request, res: Response, next: NextFunction) {
     try {
       const chats = await chatService.getChats();
+      res.status(200).json(chats);
+    } catch (error) {
+      next(error);
+    }
+  }
+  public async getChatById(req: Request, res: Response, next: NextFunction) {
+    const { chatId } = req.params;
+    try {
+      const chats = await chatService.getChatById(chatId);
       res.status(200).json(chats);
     } catch (error) {
       next(error);

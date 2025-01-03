@@ -3,17 +3,18 @@ const authUrl = "http://localhost:3200/api/auth"
 
 const urlBuilder = {
     chat: {
-        base: "/chat",
-        getAllChats: (chatId: string): string => urlBuilder.chat.base + `/getChats/${chatId}`,
+        base: baseUrl + "/chat",
+        getAllChats: (): string => urlBuilder.chat.base + '/getChats',
+        getChatById: (chatId: string): string => urlBuilder.chat.base + `/getChat/${chatId}`,
         createChat: (): string => urlBuilder.chat.base + "/createChat",
         updateChat: (): string => urlBuilder.chat.base + "/updateChat",
-        removeChat: (chatId: string): string => urlBuilder.chat.base + `/removeChat/${chatId}`
+        removeChat: (chatId: string): string => urlBuilder.chat.base + `/removeChat/${chatId}`,
+        searchChats: (query: string): string => urlBuilder.chat.base + `/searchChats?query=${query}`,
     },
     message: {
-        base: "/message",
+        base: baseUrl + "/message",
         getMessages: (chatId: string): string => urlBuilder.message.base + `/getMessages/${chatId}`,
         sendMessage: (): string => urlBuilder.message.base + "/sendMessage",
-        // +`/getMessages/${chatId}
         startAutoSend: (): string => urlBuilder.message.base + "/startAutoSend",
         stopAutoSend: (): string => urlBuilder.message.base + `/stopAutoSend`
     },

@@ -17,6 +17,10 @@ class ChatRepository {
     return await Chat.findByIdAndDelete(chatId);
   }
 
+  public async getChatById(chatId: string) {
+    return await Chat.findById(chatId);
+  }
+
   public async getChats() {
     return await Chat.find();
   }

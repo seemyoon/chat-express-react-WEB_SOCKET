@@ -1,14 +1,11 @@
-import { Outlet } from "react-router-dom";
+import {Outlet} from "react-router-dom";
+import MenuComponent from "../components/MenuComponent";
 
 const ChatMainLayout = () => {
     return (
         <div>
-            <header>
-                <h1>Chat Application</h1>
-            </header>
-            <main>
-                <Outlet />
-            </main>
+            <MenuComponent/>
+            <Outlet/>
         </div>
     );
 };

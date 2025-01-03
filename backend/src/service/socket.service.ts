@@ -1,6 +1,7 @@
 import { Server, Socket } from "socket.io";
 
 import { IChat } from "../interfaces/chat.interface";
+import { chatService } from "./chat.service";
 
 class SocketService {
   private io: Server;
@@ -11,14 +12,27 @@ class SocketService {
     io.on("connection", (socket: Socket) => {
       console.log("A user connected", socket.id);
 
-      socket.on("chatCreated", (newChat: IChat) => {
+      socket.on("chatCreated", async (newChat: IChat) => {
         console.log("New chat created:", newChat);
-        this.io.emit("chatCreated", newChat);
+        try {
+          const createdChat = await chatService.createChat(
+            newChat.firstName,
+            newChat.lastName,
+          );
+          this.io.emit("chatCreated", createdChat);
+        } catch (error) {
+          console.error("Error creating chat:", error);
+        }
       });
 
-      socket.on("chatDeleted", (chatId: string) => {
+      socket.on("chatDeleted", async (chatId: string) => {
         console.log("Chat deleted:", chatId);
-        this.io.emit("chatDeleted", chatId);
+        try {
+          await chatService.removeChat(chatId);
+          this.io.emit("chatDeleted", chatId);
+        } catch (error) {
+          console.error("Error deleting chat:", error);
+        }
       });
 
       socket.on("sendMessage", (data) => {
