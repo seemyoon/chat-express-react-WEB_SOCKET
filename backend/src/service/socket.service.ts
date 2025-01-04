@@ -13,7 +13,6 @@ class SocketService {
       console.log("A user connected", socket.id);
 
       socket.on("chatCreated", async (newChat: IChat) => {
-        console.log("New chat created:", newChat);
         try {
           const createdChat = await chatService.createChat(
             newChat.firstName,
@@ -26,7 +25,6 @@ class SocketService {
       });
 
       socket.on("chatDeleted", async (chatId: string) => {
-        console.log("Chat deleted:", chatId);
         try {
           await chatService.removeChat(chatId);
           this.io.emit("chatDeleted", chatId);

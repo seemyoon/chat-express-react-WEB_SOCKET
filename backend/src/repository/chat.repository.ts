@@ -2,8 +2,7 @@ import { Chat } from "../model/chat.model";
 
 class ChatRepository {
   public async createChat(chatData: { firstName: string; lastName: string }) {
-    const chat = new Chat(chatData);
-    return await chat.save();
+    return await Chat.create(chatData);
   }
 
   public async updateChat(

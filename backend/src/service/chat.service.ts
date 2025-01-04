@@ -1,26 +1,19 @@
 import { chatRepository } from "../repository/chat.repository";
-import { socketService } from "./socket.service";
 
 class ChatService {
   public async createChat(firstName: string, lastName: string) {
-    const chat = await chatRepository.createChat({ firstName, lastName });
-    socketService.emit("newChat", chat); // Emit to clients
-    return chat;
+    return await chatRepository.createChat({ firstName, lastName });
   }
 
   public async updateChat(chatId: string, firstName: string, lastName: string) {
-    const updatedChat = await chatRepository.updateChat(chatId, {
+    return await chatRepository.updateChat(chatId, {
       firstName,
       lastName,
     });
-    socketService.emit("chatUpdated", updatedChat); // Emit to clients
-    return updatedChat;
   }
 
   public async removeChat(chatId: string) {
-    const deletedChat = await chatRepository.removeChat(chatId);
-    socketService.emit("chatRemoved", deletedChat); // Emit to clients
-    return deletedChat;
+    await chatRepository.removeChat(chatId);
   }
 
   public async getChats() {
