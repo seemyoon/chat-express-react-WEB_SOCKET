@@ -1,25 +1,27 @@
-import React, {useEffect, useState} from "react";
-import {chatService} from "../services/chat.service";
-import {IChat} from "../interfaces/chat.interface";
-import {socket} from "../utils/socket";
+import React, { useState, useEffect } from "react";
+import { chatService } from "../services/chat.service";
+import { IChat } from "../interfaces/chat.interface";
+import { socket } from "../utils/socket";
 import HandleCreateChatComponent from "../components/HandleCreateChatComponent";
 import ChatsComponent from "../components/ChatsComponent";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import { chatActions } from "../redux/slices/chatSlice";
+import { editChatActions } from "../redux/slices/editChatSlice";
+import ConfirmDialogComponent from "../components/ConfirmDialogComponent/ConfirmDialogComponent"; // Импортируем компонент модального окна
 
 const ChatsPage = () => {
-    const [chats, setChats] = useState<IChat[]>([]);
+    const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(false);
-    const [editingChat, setEditingChat] = useState<IChat | null>(null); // Состояние для редактируемого чата
-    const [newFirstName, setNewFirstName] = useState("");
-    const [newLastName, setNewLastName] = useState("");
+    const { newFirstName, newLastName } = useAppSelector((state) => state.editChatSliceState);
+    const [editingChat, setEditingChat] = useState<IChat | null>(null);
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+    const [chatToDelete, setChatToDelete] = useState<string | null>(null);
 
     useEffect(() => {
-        socket.connect(); // Connect to the server using WebSocket
+        socket.connect();
 
         setLoading(true);
-        chatService.getChats() // Fetch the list of chats from the server
-            .then((chatList) => {
-                setChats(chatList);
-            })
+        dispatch(chatActions.loadChats())
             .catch((error) => {
                 console.error("Error fetching chats:", error);
             })
@@ -27,43 +29,29 @@ const ChatsPage = () => {
                 setLoading(false);
             });
 
-        // Listen for the "chatCreated" event from the server
         socket.on("chatCreated", (newChat: IChat) => {
-            setChats((prevChats) => {
-                if (!prevChats.find(chat => chat._id === newChat._id)) {
-                    return [...prevChats, newChat]; // Add the new chat to the list
-                }
-                return prevChats;
-            });
+            dispatch(chatActions.addChat(newChat));
         });
 
-        // Listen for the "chatDeleted" event from the server
         socket.on("chatDeleted", (chatId: string) => {
-            setChats((prevChats) => prevChats.filter((chat) => chat._id !== chatId)); // Remove the chat from the list
+            dispatch(chatActions.deleteChat(chatId));
         });
 
-        // Listen for the "chatUpdated" event from the server
         socket.on("chatUpdated", (updatedChat: IChat) => {
-            setChats((prevChats) =>
-                prevChats.map((chat) =>
-                    chat._id === updatedChat._id ? updatedChat : chat
-                )
-            );
+            dispatch(chatActions.updateChat(updatedChat));
         });
 
         return () => {
-            // Clean up event listeners when the component is unmounted
             socket.off("chatCreated");
             socket.off("chatDeleted");
             socket.off("chatUpdated");
         };
-    }, []);
+    }, [dispatch]);
 
-    // Emit the "chatCreateRequested" event to the server when creating a chat
     const handleCreateChat = (newChatData: { firstName: string; lastName: string }) => {
         setLoading(true);
         try {
-            socket.emit("chatCreateRequested", newChatData); // Emit the "chatCreateRequested" event to the server
+            socket.emit("chatCreateRequested", newChatData);
         } catch (error) {
             console.error("Error creating chat:", error);
         } finally {
@@ -71,42 +59,56 @@ const ChatsPage = () => {
         }
     };
 
-    // Emit the "chatDeleteRequested" event to the server when deleting a chat
     const handleDeleteChat = (chatId: string) => {
-        chatService.removeChat(chatId)
-            .then(() => {
-                socket.emit("chatDeleteRequested", chatId); // Emit the "chatDeleteRequested" event to the server
-            })
-            .catch((error) => {
-                console.error("Error deleting chat:", error);
-            });
+        setChatToDelete(chatId);
+        setShowConfirmDialog(true);
     };
 
-    const handleUpdateChat = (chatId: string) => {
-        if (newFirstName && newLastName) {
-            const updatedData = {firstName: newFirstName, lastName: newLastName};
-            socket.emit("chatUpdateRequested", {chatId, ...updatedData});
+    const confirmDeleteChat = () => {
+        if (chatToDelete) {
+            chatService.removeChat(chatToDelete)
+                .then(() => {
+                    socket.emit("chatDeleteRequested", chatToDelete);
+                })
+                .catch((error) => {
+                    console.error("Error deleting chat:", error);
+                })
+                .finally(() => {
+                    setShowConfirmDialog(false);
+                    setChatToDelete(null);
+                });
+        }
+    };
+
+    const cancelDeleteChat = () => {
+        setShowConfirmDialog(false);
+        setChatToDelete(null);
+    };
+
+    const handleUpdateChat = () => {
+        if (editingChat && newFirstName && newLastName) {
+            const updatedData = { firstName: newFirstName, lastName: newLastName };
+            socket.emit("chatUpdateRequested", { chatId: editingChat._id, ...updatedData });
             setEditingChat(null);
+            dispatch(editChatActions.setNewFirstName(""));
+            dispatch(editChatActions.setNewLastName(""));
         }
     };
 
     const updateChatState = (chat: IChat) => {
         setEditingChat(chat);
-        setNewFirstName(chat.firstName);
-        setNewLastName(chat.lastName);
+        dispatch(editChatActions.setNewFirstName(chat.firstName));
+        dispatch(editChatActions.setNewLastName(chat.lastName));
     };
+
     return (
         <div>
             <h3>Chats</h3>
-            <HandleCreateChatComponent handleCreateChat={handleCreateChat} loading={loading}/>
+            <HandleCreateChatComponent handleCreateChat={handleCreateChat} loading={loading} />
             {loading ? (
                 <p>Loading...</p>
             ) : (
-                <ChatsComponent
-                    chats={chats}
-                    handleDeleteChat={handleDeleteChat}
-                    updateChatState={updateChatState}
-                />
+                <ChatsComponent handleDeleteChat={handleDeleteChat} updateChatState={updateChatState} />
             )}
 
             {editingChat && (
@@ -116,17 +118,25 @@ const ChatsPage = () => {
                         type="text"
                         placeholder="First Name"
                         value={newFirstName}
-                        onChange={(e) => setNewFirstName(e.target.value)}
+                        onChange={(e) => dispatch(editChatActions.setNewFirstName(e.target.value))}
                     />
                     <input
                         type="text"
                         placeholder="Last Name"
                         value={newLastName}
-                        onChange={(e) => setNewLastName(e.target.value)}
+                        onChange={(e) => dispatch(editChatActions.setNewLastName(e.target.value))}
                     />
-                    <button onClick={() => handleUpdateChat(editingChat._id)}>Update</button>
+                    <button onClick={handleUpdateChat}>Update</button>
                     <button onClick={() => setEditingChat(null)}>Cancel</button>
                 </div>
+            )}
+
+            {showConfirmDialog && (
+                <ConfirmDialogComponent
+                    message="Are you sure you want to delete this chat?"
+                    onConfirm={confirmDeleteChat}
+                    onCancel={cancelDeleteChat}
+                />
             )}
         </div>
     );

@@ -1,30 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { chatService } from "../services/chat.service";
-import { IChat } from "../interfaces/chat.interface";
+import React, {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
+import {useAppDispatch, useAppSelector} from "../redux/store";
+import {chatActions} from "../redux/slices/chatSlice";
 
 const ChatPage = () => {
-    const { chatId } = useParams<{ chatId: string }>();
-    const [chat, setChat] = useState<IChat | null>(null);
+    const params = useParams();
+    const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(false);
+    const {chat} = useAppSelector(state => state.chatSliceState);
 
     useEffect(() => {
-        if (!chatId) return;
+        setLoading(true);
+        if (params.id) {
+            dispatch(chatActions.loadChatById(params.id))
+                .catch((error) => {
+                    console.error("Error fetching chats:", error);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
 
-        const fetchChat = async () => {
-            try {
-                setLoading(true);
-                const fetchedChat = await chatService.getChatById(chatId);
-                setChat(fetchedChat);
-            } catch (error) {
-                console.error("Error fetching chat:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchChat();
-    }, [chatId]);
-
+    }, [dispatch, params.id]);
     return (
         <div>
             <h3>Chat with {chat?.firstName} {chat?.lastName}</h3>
