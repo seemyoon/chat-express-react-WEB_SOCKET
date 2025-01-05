@@ -1,12 +1,13 @@
 import React, {FC} from "react";
 import {IChat} from "../interfaces/chat.interface";
 
-interface HandleDeleteChatProps {
+interface Props {
     chats: IChat[];
     handleDeleteChat: (chatId: string) => void;
+    updateChatState: (chat: IChat) => void;
 }
 
-const HandleDeleteChatComponent: FC<HandleDeleteChatProps> = ({chats, handleDeleteChat}) => {
+const ChatsComponent: FC<Props> = ({chats, handleDeleteChat, updateChatState}) => {
     return (
         <ul>
             {chats.map((chat) => (
@@ -15,10 +16,11 @@ const HandleDeleteChatComponent: FC<HandleDeleteChatProps> = ({chats, handleDele
                         {chat.firstName} {chat.lastName}
                     </span>
                     <button onClick={() => handleDeleteChat(chat._id)}>Delete</button>
+                    <button onClick={() => updateChatState(chat)}>Update</button>
                 </li>
             ))}
         </ul>
     );
 };
 
-export default HandleDeleteChatComponent;
+export default ChatsComponent;

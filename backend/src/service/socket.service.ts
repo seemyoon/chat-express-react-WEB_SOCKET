@@ -24,17 +24,6 @@ class SocketService {
         } catch (error) {
           console.error("Error creating chat:", error);
         }
-
-        // try {
-        //   const createdChat = await chatService.createChat(
-        //     newChatData.firstName,
-        //     newChatData.lastName,
-        //   );
-        //
-        //   this.io.emit("chatCreated", createdChat);
-        // } catch (error) {
-        //   console.error("Error creating chat:", error);
-        // }
       });
 
       // Handle the "chatDeleteRequested" event sent from the client
@@ -46,6 +35,27 @@ class SocketService {
           console.error("Error deleting chat:", error);
         }
       });
+
+      socket.on(
+        "chatUpdateRequested",
+        async (updatedChatData: {
+          chatId: string;
+          firstName: string;
+          lastName: string;
+        }) => {
+          const { chatId, firstName, lastName } = updatedChatData;
+          try {
+            const updatedChat = await chatService.updateChat(
+              chatId,
+              firstName,
+              lastName,
+            );
+            this.io.emit("chatUpdated", updatedChat); // Server sends the "chatUpdated" event to all clients
+          } catch (error) {
+            console.error("Error updating chat:", error);
+          }
+        },
+      );
 
       // Handle the "sendMessage" event sent from the client
       socket.on("sendMessage", (data) => {
