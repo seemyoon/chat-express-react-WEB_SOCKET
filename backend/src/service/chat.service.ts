@@ -13,7 +13,7 @@ class ChatService {
   }
 
   public async removeChat(chatId: string) {
-    await chatRepository.removeChat(chatId);
+    return await chatRepository.removeChat(chatId);
   }
 
   public async getChats() {

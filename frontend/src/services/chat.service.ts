@@ -15,8 +15,8 @@ const chatService = {
         const response = await axiosInstance.post<IChat>(urlBuilder.chat.createChat(), data)
         return response.data
     },
-    updateChat: async (data: any): Promise<IChat> => {
-        const response = await axiosInstance.put<IChat>(urlBuilder.chat.updateChat(), data)
+    updateChat: async (chatId: string, data: any): Promise<IChat> => {
+        const response = await axiosInstance.put<IChat>(urlBuilder.chat.updateChat(chatId), data)
         return response.data
     },
     removeChat: async (chatId: string): Promise<void> => {
