@@ -1,23 +1,27 @@
-import mongoose from "mongoose";
-
+import { Sender } from "../enum/sender.enum";
 import { Chat } from "../model/chat.model";
-import { Message } from "../model/message.model";
 import { messageRepository } from "../repository/message.repository";
 import { axiosService } from "./axios.service";
 import { socketService } from "./socket.service";
 
 class MessageService {
-  public async sendMessage(chatId: string, text: string) {
+  public async sendMessage(chatId: string, text: string, sender: Sender) {
     try {
-      const userMessage = await messageRepository.sendMessage(chatId, text);
+      const userMessage = await messageRepository.sendMessage(
+        chatId,
+        text,
+        sender,
+      );
 
-      setTimeout(async () => {
-        try {
-          await this.sendAutoResponse(chatId);
-        } catch (error) {
-          console.error("Failed to send auto-response:", error);
-        }
-      }, 1000);
+      if (sender === Sender.USER) {
+        setTimeout(async () => {
+          try {
+            await this.sendAutoResponse(chatId);
+          } catch (error) {
+            console.error("Failed to send auto-response:", error);
+          }
+        }, 1000);
+      }
 
       return userMessage;
     } catch (error) {
@@ -35,12 +39,11 @@ class MessageService {
         return;
       }
 
-      const autoMessage = await Message.create({
+      const autoMessage = await messageRepository.sendMessage(
         chatId,
-        text: randomQuote.quote,
-        sender: "Bot",
-        createdAt: new Date(),
-      });
+        randomQuote.quote,
+        Sender.BOT,
+      );
 
       socketService.emit("receiveMessage", autoMessage);
 
@@ -52,20 +55,12 @@ class MessageService {
   }
 
   public async getMessages(chatId: string) {
-    if (!this.isValidObjectId(chatId)) {
-      throw { status: 400, message: "Invalid chat ID format" };
-    }
-
     const chatExists = await Chat.findById(chatId);
     if (!chatExists) {
       throw { status: 404, message: "Chat not found" };
     }
 
-    return await Message.find({ chatId }).sort({ createdAt: 1 });
-  }
-
-  private isValidObjectId(id: string): boolean {
-    return mongoose.Types.ObjectId.isValid(id);
+    return await messageRepository.getMessages(chatId); // Используем репозиторий для получения сообщений
   }
 }
 

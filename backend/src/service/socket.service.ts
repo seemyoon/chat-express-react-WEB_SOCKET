@@ -1,8 +1,9 @@
 import { Server, Socket } from "socket.io";
 
+import { Sender } from "../enum/sender.enum"; // Добавим импорт messageService
 import { IChat } from "../interfaces/chat.interface";
 import { chatService } from "./chat.service";
-import { messageService } from "./message.service"; // Добавим импорт messageService
+import { messageService } from "./message.service";
 
 class SocketService {
   private io: Server;
@@ -13,7 +14,6 @@ class SocketService {
     io.on("connection", (socket: Socket) => {
       console.log("User connected:", socket.id);
 
-      // Обработка события создания чата
       socket.on("chatCreateRequested", async (newChatData: IChat) => {
         try {
           const createdChat = await chatService.createChat(
@@ -21,23 +21,22 @@ class SocketService {
             newChatData.lastName,
           );
 
-          this.io.emit("chatCreated", createdChat);
+          this.io.emit("chatCreated", createdChat); // Server sends the "chatCreated" event to all clients with the newly created chat data
         } catch (error) {
           console.error("Error creating chat:", error);
         }
       });
 
-      // Обработка события удаления чата
+      // Handle the "chatDeleteRequested" event sent from the client
       socket.on("chatDeleteRequested", async (chatId: string) => {
         try {
           await chatService.removeChat(chatId);
-          this.io.emit("chatDeleted", chatId);
+          this.io.emit("chatDeleted", chatId); // Server sends the "chatDeleted" event to all clients with the ID of the deleted chat
         } catch (error) {
           console.error("Error deleting chat:", error);
         }
       });
 
-      // Обработка события обновления чата
       socket.on(
         "chatUpdateRequested",
         async (updatedChatData: {
@@ -52,39 +51,43 @@ class SocketService {
               firstName,
               lastName,
             );
-            this.io.emit("chatUpdated", updatedChat);
+            this.io.emit("chatUpdated", updatedChat); // Server sends the "chatUpdated" event to all clients
           } catch (error) {
             console.error("Error updating chat:", error);
           }
         },
       );
 
-      // Обработка отправки сообщения
+      // Handle the "sendMessage" event sent from the client
       socket.on(
         "sendMessage",
-        async (data: { chatId: string; text: string }) => {
+        async (data: {
+          chatId: string;
+          text: string;
+          sender: "User" | "Bot";
+        }) => {
           try {
             const message = await messageService.sendMessage(
               data.chatId,
               data.text,
+              data.sender as Sender,
             );
-            this.emit("receiveMessage", message); // Центральный вызов для отправки сообщений через сокет
+            this.io.emit("receiveMessage", message); /// Server sends the "receiveMessage" event to all clients with the message data
           } catch (error) {
             console.error("Error sending message:", error);
           }
         },
       );
 
-      // Обработка отключения пользователя
+      // Handle client disconnection
       socket.on("disconnect", () => {
         console.log("User disconnected:", socket.id);
       });
     });
   }
 
-  // Метод для отправки сообщений через сокет
   public emit(event: string, data: any) {
-    this.io.emit(event, data);
+    this.io.emit(event, data); // Send an event to all clients
   }
 }
 
