@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { chatService } from "../services/chat.service";
 import { IChat } from "../interfaces/chat.interface";
 import { socket } from "../utils/socket";
-import HandleCreateChatComponent from "../components/HandleCreateChatComponent";
-import ChatsComponent from "../components/ChatsComponent";
+import HandleCreateChatComponent from "../components/ChatComponents/HandleCreateChatComponent";
+import ChatsComponent from "../components/ChatComponents/ChatsComponent";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { chatActions } from "../redux/slices/chatSlice";
 import { editChatActions } from "../redux/slices/editChatSlice";
-import ConfirmDialogComponent from "../components/ConfirmDialogComponent/ConfirmDialogComponent"; // Импортируем компонент модального окна
+import ConfirmDialogComponent from "../components/ChatComponents/ConfirmDialogComponent/ConfirmDialogComponent"; // Импортируем компонент модального окна
 
 const ChatsPage = () => {
     const dispatch = useAppDispatch();

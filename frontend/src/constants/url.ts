@@ -12,9 +12,7 @@ const urlBuilder = {
     message: {
         base: baseUrl + "/message",
         getMessages: (chatId: string): string => urlBuilder.message.base + `/getMessages/${chatId}`,
-        sendMessage: (): string => urlBuilder.message.base + "/sendMessage",
-        startAutoSend: (): string => urlBuilder.message.base + "/startAutoSend",
-        stopAutoSend: (): string => urlBuilder.message.base + `/stopAutoSend`
+        sendMessage: (chartId: string): string => urlBuilder.message.base + "/sendMessage",
     },
     auth: {
         loginWithGoogle: (): string => authUrl + "/googleLogin",

@@ -1,7 +1,7 @@
 import React, {FC, useEffect} from "react";
-import {IChat} from "../interfaces/chat.interface";
-import {useAppDispatch, useAppSelector} from "../redux/store";
-import {chatActions} from "../redux/slices/chatSlice";
+import {IChat} from "../../interfaces/chat.interface";
+import {useAppDispatch, useAppSelector} from "../../redux/store";
+import {chatActions} from "../../redux/slices/chatSlice";
 import {Link} from "react-router-dom";
 
 interface Props {

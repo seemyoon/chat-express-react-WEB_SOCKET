@@ -12,17 +12,13 @@ const messageService = {
         const response = await axiosInstance.get<IMessage[]>(urlBuilder.message.getMessages(chatId))
         return response.data
     },
-    sendMessage: async (data: any) => {
-        const response = await axiosInstance.post<IMessage>(urlBuilder.message.sendMessage(), data)
-        return response.data
-    },
-    startAutoSend: async () => {
-        const response = await axiosInstance.post<void>(urlBuilder.message.startAutoSend())
-        return response.data
-    },
-    stopAutoSend: async () => {
-        const response = await axiosInstance.post<void>(urlBuilder.message.stopAutoSend())
-        return response.data
+    async sendMessage(chatId: string, text: string) {
+        const response = await axios.post(urlBuilder.message.sendMessage(chatId), {
+            chatId,
+            text,
+            sender: "User"
+        });
+        return response.data;
     }
 }
 

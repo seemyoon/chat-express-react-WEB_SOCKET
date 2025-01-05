@@ -1,5 +1,5 @@
 import {Outlet} from "react-router-dom";
-import MenuComponent from "../components/MenuComponent";
+import MenuComponent from "../components/ChatComponents/MenuComponent";
 
 const ChatMainLayout = () => {
     return (

@@ -2,12 +2,14 @@ import {configureStore} from "@reduxjs/toolkit";
 import {useDispatch, useSelector} from "react-redux";
 import {chatSlice} from "./slices/chatSlice";
 import {editChatSlice} from "./slices/editChatSlice";
+import {messageSlice} from "./slices/messageSlice";
 
 
 export const store = configureStore({
     reducer: {
         chatSliceState: chatSlice.reducer,
         editChatSliceState: editChatSlice.reducer,
+        messageSliceState: messageSlice.reducer,
     }
 })
 type AppDispatch = typeof store.dispatch

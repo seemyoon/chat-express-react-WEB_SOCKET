@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { chatService } from "../services/chat.service";
-import { IChat } from "../interfaces/chat.interface";
+import { chatService } from "../../services/chat.service";
+import { IChat } from "../../interfaces/chat.interface";
 
 const SearchChatComponent = () => {
     const { register, handleSubmit } = useForm<{ query: string }>();

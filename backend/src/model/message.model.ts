@@ -4,19 +4,17 @@ import { IMessage } from "../interfaces/message.interface";
 
 const messageSchema = new Schema(
   {
-    chatId: {
-      type: String,
-      required: true,
-    },
+    chatId: { type: Schema.Types.ObjectId, ref: "Chat", required: true },
     text: {
       type: String,
       required: true,
     },
     sender: {
       type: String,
-      enum: ["User", "AutoResponder"],
+      enum: ["User", "Bot"],
       required: true,
     },
+    createdAt: { type: Date, default: Date.now },
   },
   {
     timestamps: true,

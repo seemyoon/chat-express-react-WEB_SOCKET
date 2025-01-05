@@ -3,6 +3,4 @@ export interface IMessage {
     chatId: string;
     text: string;
     sender: string;
-    createdAt: string;
-    updatedAt: string;
 }

@@ -3,7 +3,7 @@ import {AxiosError} from "axios";
 import {chatService} from "../services/chat.service";
 
 export const loadChats = createAsyncThunk(
-    "chatSlice/loadPokemon",
+    "chatSlice/loadChats",
     async (_, thunkAPI) => {
         try {
             const resp = await chatService.getChats()

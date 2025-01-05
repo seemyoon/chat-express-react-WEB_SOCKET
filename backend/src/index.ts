@@ -3,10 +3,10 @@ import * as http from "node:http";
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import session from "express-session";
-import mongoose from "mongoose";
 import { Server } from "socket.io";
 
 import { configs } from "./config/config";
+import connectToDatabase from "./config/database";
 import passport from "./config/passport";
 import { ApiError } from "./errors/api-error";
 import { authRouter } from "./router/auth.router";
@@ -81,7 +81,7 @@ process.on("uncaughtException", (error) => {
 
 server.listen(configs.APP_PORT, async () => {
   try {
-    await mongoose.connect(configs.APP_MONGO_URL);
+    await connectToDatabase();
     console.log(
       ` Server is running on http://${configs.APP_HOST}:${configs.APP_PORT}`,
     );
