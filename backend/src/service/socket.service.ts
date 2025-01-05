@@ -79,6 +79,21 @@ class SocketService {
         },
       );
 
+      socket.on(
+        "updateMessageRequested",
+        async (data: { messageId: string; text: string }) => {
+          try {
+            const updatedMessage = await messageService.updateMessage(
+              data.messageId,
+              data.text,
+            );
+            this.io.emit("messageUpdated", updatedMessage);
+          } catch (error) {
+            console.error("Error updating message:", error);
+          }
+        },
+      );
+
       // Handle client disconnection
       socket.on("disconnect", () => {
         console.log("User disconnected:", socket.id);

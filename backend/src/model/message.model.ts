@@ -11,7 +11,7 @@ const messageSchema = new Schema(
     },
     sender: {
       type: String,
-      enum: ["User", "Bot"],
+      enum: ["Me", "Bot"],
       required: true,
     },
     createdAt: { type: Date, default: Date.now },

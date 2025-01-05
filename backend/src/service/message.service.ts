@@ -13,7 +13,7 @@ class MessageService {
         sender,
       );
 
-      if (sender === Sender.USER) {
+      if (sender === Sender.Me) {
         setTimeout(async () => {
           try {
             await this.sendAutoResponse(chatId);
@@ -26,6 +26,14 @@ class MessageService {
       return userMessage;
     } catch (error) {
       console.error("Error in sendMessage:", error);
+      throw error;
+    }
+  }
+  public async updateMessage(messageId: string, text: string) {
+    try {
+      return await messageRepository.updateMessage(messageId, text);
+    } catch (error) {
+      console.error("Error in updateMessage:", error);
       throw error;
     }
   }
@@ -60,7 +68,7 @@ class MessageService {
       throw { status: 404, message: "Chat not found" };
     }
 
-    return await messageRepository.getMessages(chatId); // Используем репозиторий для получения сообщений
+    return await messageRepository.getMessages(chatId);
   }
 }
 

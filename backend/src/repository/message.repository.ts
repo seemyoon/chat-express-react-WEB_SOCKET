@@ -10,9 +10,12 @@ class MessageRepository {
       createdAt: new Date(),
     });
   }
+  public async updateMessage(messageId: string, text: string) {
+    return await Message.findByIdAndUpdate(messageId, { text }, { new: true });
+  }
 
   public async getMessages(chatId: string) {
-    return await Message.find({ chatId }).sort({ createdAt: 1 }); // Сортируем сообщения по дате
+    return await Message.find({ chatId }).sort({ createdAt: 1 });
   }
 }
 

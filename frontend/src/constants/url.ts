@@ -11,8 +11,8 @@ const urlBuilder = {
     },
     message: {
         base: baseUrl + "/message",
+        getMessage: (messageId: string): string => urlBuilder.message.base + `/${messageId}`,
         getMessages: (chatId: string): string => urlBuilder.message.base + `/getMessages/${chatId}`,
-        sendMessage: (chartId: string): string => urlBuilder.message.base + "/sendMessage",
     },
     auth: {
         loginWithGoogle: (): string => authUrl + "/googleLogin",
