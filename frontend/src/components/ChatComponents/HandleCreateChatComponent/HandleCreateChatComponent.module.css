@@ -1,0 +1,38 @@
+.createChatContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 5px;
+    /*background-color: #f9f9f9;*/
+    border-radius: 8px;
+}
+
+.input {
+    margin-bottom: 10px;
+    padding: 4px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.button {
+    padding: 5px;
+    background-color: #bfbfbf;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 50%;
+}
+
+.button:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
+}
+
+.header {
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}

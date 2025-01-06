@@ -3,31 +3,6 @@ import { NextFunction, Request, Response } from "express";
 import { chatService } from "../service/chat.service";
 
 class ChatController {
-  public async createChat(req: Request, res: Response, next: NextFunction) {
-    const { firstName, lastName } = req.body;
-    try {
-      const chat = await chatService.createChat(firstName, lastName);
-      res.status(201).json(chat);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  public async updateChat(req: Request, res: Response, next: NextFunction) {
-    const { chatId } = req.params;
-    const { firstName, lastName } = req.body;
-    try {
-      const updatedChat = await chatService.updateChat(
-        chatId,
-        firstName,
-        lastName,
-      );
-      res.status(200).json(updatedChat);
-    } catch (error) {
-      next(error);
-    }
-  }
-
   public async removeChat(req: Request, res: Response, next: NextFunction) {
     const { chatId } = req.params;
     try {

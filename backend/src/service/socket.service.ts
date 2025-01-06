@@ -94,6 +94,14 @@ class SocketService {
         },
       );
 
+      socket.on("toggleAutoResponse", async (toggle: boolean) => {
+        try {
+          await messageService.toggleAutoResponse(toggle);
+        } catch (error) {
+          console.error("Error toggling auto-response:", error);
+        }
+      });
+
       // Handle client disconnection
       socket.on("disconnect", () => {
         console.log("User disconnected:", socket.id);
@@ -102,7 +110,7 @@ class SocketService {
   }
 
   public emit(event: string, data: any) {
-    this.io.emit(event, data); // Send an event to all clients
+    this.io.emit(event, data); // Send an event to all clients // to use in services
   }
 }
 

@@ -1,10 +1,69 @@
 body {
     margin: 0;
     padding: 0;
-    /*background-color: #ebebeb;*/
     font-family: 'Roboto', sans-serif;
 }
 
 * {
     box-sizing: border-box;
+}
+
+.layout {
+    display: flex;
+    background-color: #f4f4f4;
+}
+
+.menu {
+    width: 400px;
+    background-color: #e4e4e4;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+}
+
+.chatContainer {
+    flex: 1;
+    padding: 20px;
+    background-color: #fff;
+}
+
+.chatItem {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+.chatIcon {
+    width: 40px;
+    height: 40px;
+    background-color: #bbb;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.chatName {
+    color: #333;
+    font-weight: bold;
+}
+
+.button {
+    margin-left: 10px;
+    background-color: #ddd;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #ccc;
+}
+
+.healingChats {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5em;
+    margin: 0;
 }

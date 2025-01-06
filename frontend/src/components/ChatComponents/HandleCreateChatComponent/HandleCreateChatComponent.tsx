@@ -1,4 +1,5 @@
 import React, {FC, useState} from "react";
+import styles from './HandleCreateChatComponent.module.css';
 
 interface HandleCreateChatProps {
     handleCreateChat: (newChatData: { firstName: string; lastName: string }) => void;
@@ -19,9 +20,10 @@ const HandleCreateChatComponent: FC<HandleCreateChatProps> = ({handleCreateChat,
     };
 
     return (
-        <div>
-            <h4>Create a New Chat</h4>
+        <div className={styles.createChatContainer}>
+            <h4 className={styles.header}>Create a New Chat</h4>
             <input
+                className={styles.input}
                 type="text"
                 name="firstName"
                 placeholder="First Name"
@@ -29,13 +31,14 @@ const HandleCreateChatComponent: FC<HandleCreateChatProps> = ({handleCreateChat,
                 onChange={handleInputChange}
             />
             <input
+                className={styles.input}
                 type="text"
                 name="lastName"
                 placeholder="Last Name"
                 value={newChatData.lastName}
                 onChange={handleInputChange}
             />
-            <button onClick={handleSubmit} disabled={loading}>
+            <button className={styles.button} onClick={handleSubmit} disabled={loading}>
                 {loading ? "Creating..." : "Create Chat"}
             </button>
         </div>

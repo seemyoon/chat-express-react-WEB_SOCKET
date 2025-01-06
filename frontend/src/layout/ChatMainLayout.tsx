@@ -1,11 +1,19 @@
-import {Outlet} from "react-router-dom";
-import MenuComponent from "../components/ChatComponents/MenuComponent";
+import React from "react";
+import MenuComponent from "../components/MenuComponent/MenuComponent";
+import ChatsPage from "../page/ChatsPage";
+import ChatPage from "../page/ChatPage";
+import '../index.css';
 
 const ChatMainLayout = () => {
     return (
-        <div>
-            <MenuComponent/>
-            <Outlet/>
+        <div className="layout">
+            <div className="menu">
+                <MenuComponent />
+                <ChatsPage />
+            </div>
+            <div className="chatContainer">
+                <ChatPage />
+            </div>
         </div>
     );
 };

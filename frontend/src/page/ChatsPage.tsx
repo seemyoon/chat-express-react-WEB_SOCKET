@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { chatService } from "../services/chat.service";
 import { IChat } from "../interfaces/chat.interface";
 import { socket } from "../utils/socket";
-import HandleCreateChatComponent from "../components/ChatComponents/HandleCreateChatComponent";
+import HandleCreateChatComponent from "../components/ChatComponents/HandleCreateChatComponent/HandleCreateChatComponent";
 import ChatsComponent from "../components/ChatComponents/ChatsComponent";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { chatActions } from "../redux/slices/chatSlice";
 import { editChatActions } from "../redux/slices/editChatSlice";
-import ConfirmDialogComponent from "../components/ChatComponents/ConfirmDialogComponent/ConfirmDialogComponent"; // Импортируем компонент модального окна
+import ConfirmDialogComponent from "../components/ChatComponents/ConfirmDialogComponent/ConfirmDialogComponent";
+import SendMessageToRandomChatComponent from "../components/MessageComponents/SendMessageToRandomChatComponent/SendMessageToRandomChatComponent"; // Импортируем компонент модального окна
+import '../index.css';
 
 const ChatsPage = () => {
     const dispatch = useAppDispatch();
@@ -16,6 +18,7 @@ const ChatsPage = () => {
     const [editingChat, setEditingChat] = useState<IChat | null>(null);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [chatToDelete, setChatToDelete] = useState<string | null>(null);
+    const [, setIsAutoMessageEnabled] = useState(false);
 
     useEffect(() => {
         socket.connect();
@@ -41,10 +44,15 @@ const ChatsPage = () => {
             dispatch(chatActions.updateChat(updatedChat));
         });
 
+        socket.on("receiveMessage", (message) => {
+            console.log("Received message:", message);
+        });
+
         return () => {
             socket.off("chatCreated");
             socket.off("chatDeleted");
             socket.off("chatUpdated");
+            socket.off("receiveMessage");
         };
     }, [dispatch]);
 
@@ -101,9 +109,15 @@ const ChatsPage = () => {
         dispatch(editChatActions.setNewLastName(chat.lastName));
     };
 
+    const toggleAutoMessage = (toggle: boolean) => {
+        setIsAutoMessageEnabled(toggle);
+        socket.emit("toggleAutoResponse", toggle);
+    };
+
+
     return (
-        <div>
-            <h3>Chats</h3>
+        <div className="page">
+            <h3 className="healingChats">Chats</h3>
             <HandleCreateChatComponent handleCreateChat={handleCreateChat} loading={loading} />
             {loading ? (
                 <p>Loading...</p>
@@ -138,6 +152,8 @@ const ChatsPage = () => {
                     onCancel={cancelDeleteChat}
                 />
             )}
+
+            <SendMessageToRandomChatComponent toggleAutoMessage={toggleAutoMessage} />
         </div>
     );
 };

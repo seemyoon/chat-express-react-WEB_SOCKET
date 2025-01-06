@@ -1,4 +1,5 @@
 import React, {FC} from "react";
+import styles from './HandleInputChangeComponent.module.css';
 
 interface HandleInputChangeProps {
     name: string;
@@ -9,7 +10,14 @@ interface HandleInputChangeProps {
 
 const HandleInputChangeComponent: FC<HandleInputChangeProps> = ({ name, value, onChange, placeholder }) => {
     return (
-        <input type="text" name={name} value={value} onChange={onChange} placeholder={placeholder} />
+        <input
+            className={styles.input}
+            type="text"
+            name={name}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+        />
     );
 };
 

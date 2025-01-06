@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, {FC, useState} from 'react';
+import styles from './SendMessageComponent.module.css';
 
-interface Props {
+interface IProps {
     sendMessage: (text: string) => void;
 }
 
-const SendMessageComponent: React.FC<Props> = ({ sendMessage }) => {
+const SendMessageComponent: FC<IProps> = ({ sendMessage }) => {
     const [messageText, setMessageText] = useState("");
 
     const handleSend = () => {
@@ -15,13 +16,14 @@ const SendMessageComponent: React.FC<Props> = ({ sendMessage }) => {
     };
 
     return (
-        <div>
+        <div className={styles.messageContainer}>
             <input
+                className={styles.input}
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
                 placeholder="Type your message..."
             />
-            <button onClick={handleSend}>Send</button>
+            <button className={styles.button} onClick={handleSend}>Send</button>
         </div>
     );
 };

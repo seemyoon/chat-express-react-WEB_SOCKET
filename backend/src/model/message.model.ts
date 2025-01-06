@@ -14,12 +14,13 @@ const messageSchema = new Schema(
       enum: ["Me", "Bot"],
       required: true,
     },
-    createdAt: { type: Date, default: Date.now },
   },
   {
-    timestamps: true,
+    timestamps: { createdAt: true, updatedAt: false },
     versionKey: false,
   },
 );
+
+messageSchema.index({ chatId: 1, createdAt: 1 });
 
 export const Message = model<IMessage>("Message", messageSchema);

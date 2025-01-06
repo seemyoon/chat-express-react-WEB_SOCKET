@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../redux/store";
-import { socket } from "../utils/socket";
-import { chatActions } from "../redux/slices/chatSlice";
-import { messageActions } from "../redux/slices/messageSlice";
-import { IMessage } from "../interfaces/message.interface";
-import { Sender } from "../enum/sender.enum";
-import SendMessageComponent from "../components/MessageComponents/SendMessageComponent";
+import React, {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
+import {useAppDispatch, useAppSelector} from "../redux/store";
+import {socket} from "../utils/socket";
+import {chatActions} from "../redux/slices/chatSlice";
+import {messageActions} from "../redux/slices/messageSlice";
+import {IMessage} from "../interfaces/message.interface";
+import {Sender} from "../enum/sender.enum";
+import SendMessageComponent from "../components/MessageComponents/SendMessageComponent/SendMessageComponent";
+import '../index.css';
 
 const ChatPage = () => {
     const params = useParams();
@@ -14,8 +15,8 @@ const ChatPage = () => {
     const [editMode, setEditMode] = useState<string | null>(null);
     const [editText, setEditText] = useState<string>("");
 
-    const { chat } = useAppSelector((state) => state.chatSliceState);
-    const { messages } = useAppSelector((state) => state.messageSliceState);
+    const {chat} = useAppSelector((state) => state.chatSliceState);
+    const {messages} = useAppSelector((state) => state.messageSliceState);
 
     useEffect(() => {
         socket.connect();
@@ -62,7 +63,7 @@ const ChatPage = () => {
 
     const handleSaveEditedMessage = () => {
         if (editMode && editText.trim()) {
-            socket.emit("updateMessageRequested", { messageId: editMode, text: editText });
+            socket.emit("updateMessageRequested", {messageId: editMode, text: editText});
             setEditMode(null);
             setEditText("");
         }
@@ -75,8 +76,7 @@ const ChatPage = () => {
 
     return (
         <div>
-            <h3>Chat with {chat?.firstName} {chat?.lastName}</h3>
-            <SendMessageComponent sendMessage={handleSendMessage} />
+            <h3 className="healingChats">Chat with {chat?.firstName} {chat?.lastName}</h3>
             <div>
                 {messages.map((message) => (
                     <div key={message._id}>
@@ -103,6 +103,7 @@ const ChatPage = () => {
                     </div>
                 ))}
             </div>
+            <SendMessageComponent sendMessage={handleSendMessage}/>
         </div>
     );
 };

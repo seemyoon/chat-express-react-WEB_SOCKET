@@ -1,14 +1,15 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { chatService } from "../../services/chat.service";
-import { IChat } from "../../interfaces/chat.interface";
+import React, {useState} from "react";
+import {useForm} from "react-hook-form";
+import {chatService} from "../../services/chat.service";
+import {IChat} from "../../interfaces/chat.interface";
+import styles from './SearchChatComponent.module.css';
 
 const SearchChatComponent = () => {
-    const { register, handleSubmit } = useForm<{ query: string }>();
+    const {register, handleSubmit} = useForm<{ query: string }>();
     const [searchResults, setSearchResults] = useState<IChat[]>([]);
     const [loading, setLoading] = useState(false);
 
-    const handleSearch = async ({ query }: { query: string }) => {
+    const handleSearch = async ({query}: { query: string }) => {
         try {
             setLoading(true);
             const results = await chatService.searchChat(query);
@@ -21,27 +22,27 @@ const SearchChatComponent = () => {
     };
 
     return (
-        <div>
+        <div className={styles.searchContainer}>
             <h3>Search for Chats</h3>
             <form onSubmit={handleSubmit(handleSearch)}>
                 <input
+                    className={styles.input}
                     type="text"
                     placeholder="Input search request"
                     {...register("query")}
                 />
-                <button type="submit" disabled={loading}>
+                <button className={styles.button} type="submit" disabled={loading}>
                     {loading ? "Searching..." : "Search"}
                 </button>
             </form>
             <div>
-                {searchResults.length === 0 && <p>No results found</p>}
-                <ul>
+                <div>
                     {searchResults.map((chat) => (
-                        <li key={chat._id}>
+                        <p key={chat._id}>
                             {chat.firstName} {chat.lastName}
-                        </li>
+                        </p>
                     ))}
-                </ul>
+                </div>
             </div>
         </div>
     );

@@ -7,7 +7,7 @@ import { socketService } from "./socket.service";
 class MessageService {
   public async sendMessage(chatId: string, text: string, sender: Sender) {
     try {
-      const userMessage = await messageRepository.sendMessage(
+      const userMessage = await messageRepository.saveMessage(
         chatId,
         text,
         sender,
@@ -20,7 +20,7 @@ class MessageService {
           } catch (error) {
             console.error("Failed to send auto-response:", error);
           }
-        }, 1000);
+        }, 2000);
       }
 
       return userMessage;
@@ -29,6 +29,7 @@ class MessageService {
       throw error;
     }
   }
+
   public async updateMessage(messageId: string, text: string) {
     try {
       return await messageRepository.updateMessage(messageId, text);
@@ -47,9 +48,9 @@ class MessageService {
         return;
       }
 
-      const autoMessage = await messageRepository.sendMessage(
+      const autoMessage = await messageRepository.saveMessage(
         chatId,
-        randomQuote.quote,
+        `${"Bot: " + randomQuote.quote}`,
         Sender.BOT,
       );
 
@@ -70,6 +71,44 @@ class MessageService {
 
     return await messageRepository.getMessages(chatId);
   }
+
+  public async toggleAutoResponse(toggle: boolean) {
+    if (toggle) {
+      if (this.autoResponseInterval === null) {
+        this.autoResponseInterval = setInterval(async () => {
+          const randomChat = await this.randomChat();
+          const randomQuote = await axiosService.getRandomQuote();
+          if (randomQuote && randomChat) {
+            await this.sendMessage(
+              randomChat,
+              `${"ME: " + randomQuote.quote}`,
+              Sender.Me,
+            );
+          }
+        }, 2000);
+        socketService.emit("autoResponseEnabled", true);
+      }
+    } else {
+      if (this.autoResponseInterval !== null) {
+        clearInterval(this.autoResponseInterval as any);
+        this.autoResponseInterval = null;
+        socketService.emit("autoResponseDisabled", false);
+      }
+    }
+  }
+
+  private async randomChat() {
+    try {
+      const randomChat = await Chat.aggregate([{ $sample: { size: 1 } }]);
+      return randomChat[0]._id;
+    } catch (error) {
+      console.error("Error fetching random chat:", error);
+    }
+  }
+
+  private autoResponseInterval: NodeJS.Timer | null = null; //by storing the interval ID in a variable, you can
+  // easily: - stop it when needed (clearInterval).// check if the interval is running (if the variable is null,
+  // then the interval is not running).
 }
 
 export const messageService = new MessageService();
