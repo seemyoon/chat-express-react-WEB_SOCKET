@@ -7,9 +7,12 @@ interface IProps {
 
 const SendMessageToRandomChatComponent: FC<IProps> = ({toggleAutoMessage}) => {
     return (
-        <div>
-            <button className={styles.button} onClick={() => toggleAutoMessage(true)}>Start auto message</button>
-            <button className={styles.button} onClick={() => toggleAutoMessage(false)}>Stop auto message</button>
+        <div className={styles.mainContainer}>
+            <h4 className={styles.healing4}>Send message to random chat:</h4>
+            <div className={styles.toggleInputContainer}>
+                <button className={styles.button} onClick={() => toggleAutoMessage(true)}>Start</button>
+                <button className={styles.button} onClick={() => toggleAutoMessage(false)}>Stop</button>
+            </div>
         </div>
     );
 };

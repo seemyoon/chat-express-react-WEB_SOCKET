@@ -7,3 +7,23 @@
     border-radius: 4px;
     margin: 5px;
 }
+
+.healing4Chats {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1em;
+    margin: 10px;
+}
+
+.toggleInputContainer {
+    display: flex;
+}
+
+.mainContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 5px;
+    border-radius: 8px;
+}

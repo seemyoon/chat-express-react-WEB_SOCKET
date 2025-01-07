@@ -1,7 +1,7 @@
 import React from "react";
 import MenuComponent from "../components/MenuComponent/MenuComponent";
 import ChatsPage from "../page/ChatsPage";
-import ChatPage from "../page/ChatPage";
+import ChatPage from "../page/ChatPage/ChatPage";
 import '../index.css';
 
 const ChatMainLayout = () => {

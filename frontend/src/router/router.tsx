@@ -1,7 +1,7 @@
 import {createBrowserRouter, RouteObject} from "react-router-dom";
 import ChatMainLayout from "../layout/ChatMainLayout";
 import ChatsPage from "../page/ChatsPage";
-import ChatPage from "../page/ChatPage";
+import ChatPage from "../page/ChatPage/ChatPage";
 
 const routes: RouteObject[] = [
     {

@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {useAppDispatch, useAppSelector} from "../redux/store";
-import {socket} from "../utils/socket";
-import {chatActions} from "../redux/slices/chatSlice";
-import {messageActions} from "../redux/slices/messageSlice";
-import {IMessage} from "../interfaces/message.interface";
-import {Sender} from "../enum/sender.enum";
-import SendMessageComponent from "../components/MessageComponents/SendMessageComponent/SendMessageComponent";
-import '../index.css';
+import {useAppDispatch, useAppSelector} from "../../redux/store";
+import {socket} from "../../utils/socket";
+import {chatActions} from "../../redux/slices/chatSlice";
+import {messageActions} from "../../redux/slices/messageSlice";
+import {IMessage} from "../../interfaces/message.interface";
+import {Sender} from "../../enum/sender.enum";
+import SendMessageComponent from "../../components/MessageComponents/SendMessageComponent/SendMessageComponent";
+import styles from "./ChatPage.module.css";
 
 const ChatPage = () => {
     const params = useParams();
@@ -76,7 +76,7 @@ const ChatPage = () => {
 
     return (
         <div>
-            <h3 className="healingChats">Chat with {chat?.firstName} {chat?.lastName}</h3>
+            <h3 className={styles.healingChat}>Chat with {chat?.firstName} {chat?.lastName}</h3>
             <div>
                 {messages.map((message) => (
                     <div key={message._id}>

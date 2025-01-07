@@ -10,6 +10,7 @@ import { editChatActions } from "../redux/slices/editChatSlice";
 import ConfirmDialogComponent from "../components/ChatComponents/ConfirmDialogComponent/ConfirmDialogComponent";
 import SendMessageToRandomChatComponent from "../components/MessageComponents/SendMessageToRandomChatComponent/SendMessageToRandomChatComponent"; // Импортируем компонент модального окна
 import '../index.css';
+import {messageActions} from "../redux/slices/messageSlice";
 
 const ChatsPage = () => {
     const dispatch = useAppDispatch();
@@ -18,7 +19,6 @@ const ChatsPage = () => {
     const [editingChat, setEditingChat] = useState<IChat | null>(null);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [chatToDelete, setChatToDelete] = useState<string | null>(null);
-    const [, setIsAutoMessageEnabled] = useState(false);
 
     useEffect(() => {
         socket.connect();
@@ -44,15 +44,11 @@ const ChatsPage = () => {
             dispatch(chatActions.updateChat(updatedChat));
         });
 
-        socket.on("receiveMessage", (message) => {
-            console.log("Received message:", message);
-        });
 
         return () => {
             socket.off("chatCreated");
             socket.off("chatDeleted");
             socket.off("chatUpdated");
-            socket.off("receiveMessage");
         };
     }, [dispatch]);
 
@@ -110,15 +106,13 @@ const ChatsPage = () => {
     };
 
     const toggleAutoMessage = (toggle: boolean) => {
-        setIsAutoMessageEnabled(toggle);
         socket.emit("toggleAutoResponse", toggle);
     };
 
 
     return (
         <div className="page">
-            <h3 className="healingChats">Chats</h3>
-            <HandleCreateChatComponent handleCreateChat={handleCreateChat} loading={loading} />
+            <h3 className="healingChats">Chats:</h3>
             {loading ? (
                 <p>Loading...</p>
             ) : (
@@ -152,7 +146,7 @@ const ChatsPage = () => {
                     onCancel={cancelDeleteChat}
                 />
             )}
-
+            <HandleCreateChatComponent handleCreateChat={handleCreateChat} loading={loading} />
             <SendMessageToRandomChatComponent toggleAutoMessage={toggleAutoMessage} />
         </div>
     );

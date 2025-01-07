@@ -22,6 +22,7 @@ const HandleCreateChatComponent: FC<HandleCreateChatProps> = ({handleCreateChat,
     return (
         <div className={styles.createChatContainer}>
             <h4 className={styles.header}>Create a New Chat</h4>
+            <div className={styles.inputContainer}>
             <input
                 className={styles.input}
                 type="text"
@@ -38,6 +39,7 @@ const HandleCreateChatComponent: FC<HandleCreateChatProps> = ({handleCreateChat,
                 value={newChatData.lastName}
                 onChange={handleInputChange}
             />
+            </div>
             <button className={styles.button} onClick={handleSubmit} disabled={loading}>
                 {loading ? "Creating..." : "Create Chat"}
             </button>
