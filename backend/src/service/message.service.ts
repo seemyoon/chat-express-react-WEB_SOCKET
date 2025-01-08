@@ -21,20 +21,13 @@ class MessageService {
             console.error("Failed to send auto-response:", error);
           }
         }, 2000);
+      } else {
+        await this.sendAutoResponse(chatId);
       }
 
       return userMessage;
     } catch (error) {
       console.error("Error in sendMessage:", error);
-      throw error;
-    }
-  }
-
-  public async updateMessage(messageId: string, text: string) {
-    try {
-      return await messageRepository.updateMessage(messageId, text);
-    } catch (error) {
-      console.error("Error in updateMessage:", error);
       throw error;
     }
   }
@@ -55,10 +48,16 @@ class MessageService {
       );
 
       socketService.emit("receiveMessage", autoMessage);
-
-      return autoMessage;
     } catch (error) {
       console.error("Error while sending auto-response:", error);
+      throw error;
+    }
+  }
+  public async updateMessage(messageId: string, text: string) {
+    try {
+      return await messageRepository.updateMessage(messageId, text);
+    } catch (error) {
+      console.error("Error in updateMessage:", error);
       throw error;
     }
   }
@@ -68,31 +67,33 @@ class MessageService {
     if (!chatExists) {
       throw { status: 404, message: "Chat not found" };
     }
-
     return await messageRepository.getMessages(chatId);
   }
 
-  public async toggleAutoResponse(toggle: boolean) {
+  public async toggleAutoResponse(toggle: boolean): Promise<void> {
     if (toggle) {
       if (this.autoResponseInterval === null) {
         this.autoResponseInterval = setInterval(async () => {
-          const randomChat = await this.randomChat();
-          const randomQuote = await axiosService.getRandomQuote();
-          if (randomQuote && randomChat) {
-            await this.sendMessage(
-              randomChat,
-              `${"ME: " + randomQuote.quote}`,
-              Sender.Me,
-            );
+          try {
+            const randomChat = await this.randomChat();
+            const randomQuote = await axiosService.getRandomQuote();
+            if (randomQuote && randomChat) {
+              const userMessage = await this.sendMessage(
+                randomChat,
+                `Me: ${randomQuote.quote}`,
+                Sender.Me,
+              );
+              socketService.emit("receiveMessage", userMessage);
+            }
+          } catch (error) {
+            console.error("Error during auto-response toggle:", error);
           }
         }, 2000);
-        socketService.emit("autoResponseEnabled", true);
       }
     } else {
       if (this.autoResponseInterval !== null) {
         clearInterval(this.autoResponseInterval as any);
         this.autoResponseInterval = null;
-        socketService.emit("autoResponseDisabled", false);
       }
     }
   }
