@@ -3,6 +3,8 @@ import {IChat} from "../../interfaces/chat.interface";
 import {useAppDispatch, useAppSelector} from "../../redux/store";
 import {chatActions} from "../../redux/slices/chatSlice";
 import {Link} from "react-router-dom";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faUser} from '@fortawesome/free-solid-svg-icons'
 import '../../index.css';
 
 interface Props {
@@ -25,8 +27,10 @@ const ChatsComponent: FC<Props> = ({handleDeleteChat, updateChatState}) => {
         <div>
             {chats.map((chat) => (
                 <div key={chat._id} className="chatItem">
-                    <Link to={`/${chat._id}`}>
-                        <div className="chatIcon"></div>
+                    <Link className="link" to={`/${chat._id}`}>
+                        <div className="chatIconContainer">
+                            <FontAwesomeIcon icon={faUser} inverse/>
+                        </div>
                         <div className="chatName">{chat.firstName} {chat.lastName}</div>
                     </Link>
                     <button onClick={() => handleDeleteChat(chat._id)} className="button">Delete</button>

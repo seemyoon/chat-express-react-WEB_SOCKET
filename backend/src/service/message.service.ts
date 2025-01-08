@@ -5,6 +5,9 @@ import { axiosService } from "./axios.service";
 import { socketService } from "./socket.service";
 
 class MessageService {
+  private messageQueue: Promise<void> = Promise.resolve(); // this is a kind of "empty" Promise that starts the task
+  // queue
+
   public async sendMessage(chatId: string, text: string, sender: Sender) {
     try {
       const userMessage = await messageRepository.saveMessage(
@@ -14,15 +17,7 @@ class MessageService {
       );
 
       if (sender === Sender.Me) {
-        setTimeout(async () => {
-          try {
-            await this.sendAutoResponse(chatId);
-          } catch (error) {
-            console.error("Failed to send auto-response:", error);
-          }
-        }, 2000);
-      } else {
-        await this.sendAutoResponse(chatId);
+        this.addToQueue(() => this.sendAutoResponse(chatId));
       }
 
       return userMessage;
@@ -35,24 +30,32 @@ class MessageService {
   private async sendAutoResponse(chatId: string) {
     try {
       const randomQuote = await axiosService.getRandomQuote();
-
       if (!randomQuote) {
         console.error("Failed to fetch random quote for auto-response");
         return;
       }
 
-      const autoMessage = await messageRepository.saveMessage(
+      const autoResponseMessage = await messageRepository.saveMessage(
         chatId,
-        `${"Bot: " + randomQuote.quote}`,
+        `Bot: ${randomQuote.quote}`,
         Sender.BOT,
       );
 
-      socketService.emit("receiveMessage", autoMessage);
+      socketService.emit("receiveMessage", autoResponseMessage);
     } catch (error) {
       console.error("Error while sending auto-response:", error);
       throw error;
     }
   }
+
+  private addToQueue(task: () => Promise<void>) {
+    this.messageQueue = this.messageQueue // is updated, which ensures that a new task will be executed only after the previous one has been completed.
+      .then(() => task())
+      .catch((error) => {
+        console.error("Error in message queue:", error);
+      });
+  }
+
   public async updateMessage(messageId: string, text: string) {
     try {
       return await messageRepository.updateMessage(messageId, text);

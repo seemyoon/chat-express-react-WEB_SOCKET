@@ -1,5 +1,5 @@
 const baseUrl = "http://localhost:5200"
-const authUrl = "http://localhost:3200/api/auth"
+const authUrl = "http://localhost:5200/auth/"
 
 const urlBuilder = {
     chat: {

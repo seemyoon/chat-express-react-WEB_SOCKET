@@ -27,7 +27,7 @@ const ChatPage = () => {
         }
 
         socket.on("receiveMessage", (message: IMessage) => {
-            if (message) {
+            if (message.chatId === params.id) {
                 dispatch(messageActions.addMessage(message));
             }
         });
@@ -73,37 +73,47 @@ const ChatPage = () => {
         setEditMode(null);
         setEditText("");
     };
-
+    const chatExists = chat && chat._id === params.id;
     return (
-        <div>
-            <h3 className={styles.healingChat}>Chat with {chat?.firstName} {chat?.lastName}</h3>
-            <div>
-                {messages.map((message) => (
-                    <div key={message._id}>
-                        {editMode === message._id ? (
-                            <div>
-                                <input
-                                    value={editText}
-                                    onChange={(e) => setEditText(e.target.value)}
-                                />
-                                <button onClick={handleSaveEditedMessage}>Save</button>
-                                <button onClick={handleCancelEdit}>Cancel</button>
-                            </div>
-                        ) : (
-                            <p>
-                                <strong>
-                                    {message.sender === Sender.Me ? "You" : `${chat?.firstName} ${chat?.lastName}`}
-                                </strong>
-                                : {message.text}
-                                {message.sender === Sender.Me && (
-                                    <button onClick={() => handleEditMessage(message)}>Edit</button>
-                                )}
-                            </p>
-                        )}
+        <div className={styles.chatPage}>
+            {chatExists && (
+                <>
+                    <h3 className={styles.healingChat}>
+                        Chat with {chat?.firstName} {chat?.lastName}
+                    </h3>
+                    <div className={styles.messages}>
+                        {messages
+                            .filter((message) => message.chatId === params.id)
+                            .map((message) => (
+                                <div key={message._id} className={styles.messageItem}>
+                                    {editMode === message._id ? (
+                                        <div className={styles.editContainer}>
+                                            <input
+                                                value={editText}
+                                                onChange={(e) => setEditText(e.target.value)}
+                                            />
+                                            <button onClick={handleSaveEditedMessage}>Save</button>
+                                            <button onClick={handleCancelEdit}>Cancel</button>
+                                        </div>
+                                    ) : (
+                                        <p>
+                                            <strong>
+                                                {message.sender === Sender.Me
+                                                    ? "You"
+                                                    : `${chat?.firstName} ${chat?.lastName}`}
+                                            </strong>
+                                            : {message.text}
+                                            {message.sender === Sender.Me && (
+                                                <button onClick={() => handleEditMessage(message)}>Edit</button>
+                                            )}
+                                        </p>
+                                    )}
+                                </div>
+                            ))}
                     </div>
-                ))}
-            </div>
-            <SendMessageComponent sendMessage={handleSendMessage}/>
+                    <SendMessageComponent sendMessage={handleSendMessage} />
+                </>
+            )}
         </div>
     );
 };

@@ -10,7 +10,6 @@ import { editChatActions } from "../redux/slices/editChatSlice";
 import ConfirmDialogComponent from "../components/ChatComponents/ConfirmDialogComponent/ConfirmDialogComponent";
 import SendMessageToRandomChatComponent from "../components/MessageComponents/SendMessageToRandomChatComponent/SendMessageToRandomChatComponent"; // Импортируем компонент модального окна
 import '../index.css';
-import {messageActions} from "../redux/slices/messageSlice";
 
 const ChatsPage = () => {
     const dispatch = useAppDispatch();
@@ -43,7 +42,6 @@ const ChatsPage = () => {
         socket.on("chatUpdated", (updatedChat: IChat) => {
             dispatch(chatActions.updateChat(updatedChat));
         });
-
 
         return () => {
             socket.off("chatCreated");
@@ -112,7 +110,6 @@ const ChatsPage = () => {
 
     return (
         <div className="page">
-            <h3 className="healingChats">Chats:</h3>
             {loading ? (
                 <p>Loading...</p>
             ) : (

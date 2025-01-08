@@ -15,10 +15,18 @@ passport.use(
     {
       clientID: configs.GOOGLE_CLIENT_ID,
       clientSecret: configs.GOOGLE_CLIENT_SECRET,
-      callbackURL: configs.CALLBACK_URL_TEST,
+      callbackURL: configs.CALLBACK_URL,
     },
     function (request, accessToken, refreshToken, profile, done) {
-      return done(null, profile);
+      try {
+        request.session.accessToken = accessToken;
+        request.session.refreshToken = refreshToken;
+
+        return done(null, profile);
+      } catch (error) {
+        console.error("Error in Google OAuth callback:", error);
+        return done(error);
+      }
     },
   ),
 );

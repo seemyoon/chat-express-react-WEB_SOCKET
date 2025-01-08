@@ -23,7 +23,9 @@ const SendMessageComponent: FC<IProps> = ({ sendMessage }) => {
                 onChange={(e) => setMessageText(e.target.value)}
                 placeholder="Type your message..."
             />
-            <button className={styles.button} onClick={handleSend}>Send</button>
+            <button className={styles.button} onClick={handleSend}>
+                Send
+            </button>
         </div>
     );
 };

@@ -9,55 +9,22 @@ body {
 }
 
 .layout {
-    display: flex;
-    background-color: #f4f4f4;
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    height: 100vh;
 }
 
 .menu {
-    width: 400px;
-    background-color: #e4e4e4;
-    padding: 20px;
     border-right: 1px solid #ddd;
-    display: flex;
-    flex-direction: column;
+    padding: 16px;
+    background-color: #f4f4f4;
 }
 
 .chatContainer {
-    flex: 1;
-    background-color: #fff;
-}
-
-.chatItem {
     display: flex;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    background-color: #f9f9f9;
-}
-
-.chatIcon {
-    width: 40px;
-    height: 40px;
-    background-color: #bbb;
-    border-radius: 50%;
-    margin-right: 10px;
-}
-
-.chatName {
-    color: #333;
-    font-weight: bold;
-}
-
-.button {
-    margin-left: 10px;
-    background-color: #ddd;
-    padding: 5px 10px;
-    border: none;
-    cursor: pointer;
-}
-
-.button:hover {
-    background-color: #ccc;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
 }
 
 .healingChats {
@@ -66,4 +33,71 @@ body {
     font-size: 1.5em;
     margin-bottom: 25px;
     margin-top: 5px;
+}
+
+.chatItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, transform 0.2s;
+    border-radius: 8px;
+    margin: 8px 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.chatItem:hover {
+    background-color: #f1f1f1;
+    transform: translateY(-2px);
+}
+
+.chatIconContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: #bbb;
+    color: #fff;
+    border-radius: 50%;
+    margin-right: 15px;
+    font-size: 1.2rem;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.chatIconContainer:hover {
+    background-color: #999;
+}
+
+.chatName {
+    flex-grow: 1;
+    font-weight: 500;
+    font-size: 1rem;
+    color: #333;
+    word-break: break-word;
+}
+
+.link {
+    text-decoration: none;
+    color: white;
+}
+
+.button {
+    padding: 8px 15px;
+    background-color: #e4e4e4;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.button:hover {
+    background-color: #d0d0d0;
+    transform: scale(1.05);
+}
+
+.button:active {
+    background-color: #bbb;
 }
